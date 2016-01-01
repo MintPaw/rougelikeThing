@@ -16,7 +16,7 @@ class MapGen
 	public static var minRoomRatio:Int;
 	public static var maxRoomRatio:Int;
 
-	public static var totalRooms:Int;
+	public static var rooms:Array<Room>;
 
 	private static var _rnd:FlxRandom;
 
@@ -39,7 +39,17 @@ class MapGen
 		}
 
 		{ // Construct random rooms
-			totalRooms = _rnd.int(minRooms, maxRooms);
+			rooms = [];
+			for (i in 0..._rnd.int(minRooms, maxRooms))
+			{
+				var w:Int = _rnd.int(minRoomSize, maxRoomSize);
+				var h:Int = _rnd.int(minRoomSize, maxRoomSize);
+				var x:Int = _rnd.int(0, mapWidth - w);
+				var y:Int = _rnd.int(0, mapHeight - h);
+
+				var r:Room = createRoom(x, y, w, h);
+				rooms.push(r);
+			}
 		}
 
 		return m;
@@ -59,6 +69,9 @@ class MapGen
 		r.centreX = Std.int((r.x0 + r.x1) / 2);
 		r.centreY = Std.int((r.y0 + r.y1) / 2);
 
+		r.ratio = Std.int(r.w/r.h*100);
+		if (r.ratio > 1) r.ratio -= 1;
+
 		return r;
 	}
 }
@@ -73,5 +86,6 @@ typedef Room =
 	?w:Int,
 	?h:Int,
 	?centreX:Int,
-	?centreY:Int
+	?centreY:Int,
+	?ratio:Int
 }
