@@ -12,16 +12,15 @@ class MapGen
 	{
 	}
 
-	public static function gen():Array<Int>
+	public static function gen():Array<Array<Int>>
 	{
-		var m:Array<Int> = [];
-		for (i in 0...mapWidth+mapHeight) m.push(1);
+		var m:Array<Array<Int>> = [];
+		for (i in 0...mapHeight) 
+		{
+			m.push([]);
+			for (i in 0...mapWidth) m[m.length-1].push(1);
+		}
 
 		return m;
-	}
-
-	private static function byTile(x:Int, y:Int):Int
-	{
-		return y*mapWidth+x;
 	}
 }
