@@ -17,8 +17,8 @@ class MainState extends FlxState
 		super.create();
 		haxe.Log.trace = myTrace;
 
-		MapGen.mapWidth = 20;
-		MapGen.mapHeight = 20;
+		MapGen.mapWidth = 50;
+		MapGen.mapHeight = 50;
 		MapGen.minRooms = 3;
 		MapGen.maxRooms = 6;
 		MapGen.minRoomSize = 2;
