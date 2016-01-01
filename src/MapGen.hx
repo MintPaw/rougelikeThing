@@ -7,6 +7,9 @@ class MapGen
 	public static var GROUND:Int = 1;
 	public static var WALL:Int = 2;
 
+	public static var HORIZONTAL:Int = 0;
+	public static var VERTICAL:Int = 1;
+
 	public static var mapWidth:Int;
 	public static var mapHeight:Int;
 	public static var minRooms:Int;
@@ -103,6 +106,23 @@ class MapGen
 		return r;
 	}
 
+	private static function createHall():Void
+	{
+		/*
+		private function hCorridor(x1:Int, x2:Int, y) {
+			for (x in Std.int(Math.min(x1, x2))...Std.int(Math.max(x1, x2)) + 1) {
+				map[x][y].setLoc(x, y);
+			}
+		}
+
+		private function vCorridor(y1:Int, y2:Int, x) {
+			for (y in Std.int(Math.min(y1, y2))...Std.int(Math.max(y1, y2)) + 1) {
+				map[x][y].setLoc(x, y);
+			}
+		}
+		*/
+	}
+
 	private static function roomsIntersect(r0:Room, r1:Room):Bool
 	{
 		return (r0.x0 <= r1.x1 && r0.x1 >= r1.x0 &&
@@ -125,4 +145,17 @@ typedef Room =
 
 	?hallExitX:Int,
 	?hallExitY:Int
+}
+
+typedef Hall =
+{
+	?x0:Int,
+	?x1:Int,
+	?y0:Int,
+	?y1:Int,
+	?dir:Int,
+
+	?length:Int,
+	r0:Room,
+	r1:Room
 }
