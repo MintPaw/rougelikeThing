@@ -78,7 +78,6 @@ class MapGen
 		};
 		r.centreX = Std.int((r.x0 + r.x1) / 2);
 		r.centreY = Std.int((r.y0 + r.y1) / 2);
-
 		r.ratio = Math.round(r.w/r.h*100);
 
 		if (debug) trace('Creating room $x,$y ${w}x$h ratio ${r.ratio}');
