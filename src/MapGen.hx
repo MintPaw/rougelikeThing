@@ -45,7 +45,8 @@ class MapGen
 			if (debug) trace("Creating rooms");
 
 			rooms = [];
-			for (i in 0..._rnd.int(minRooms, maxRooms))
+			var roomsToBuild:Int = _rnd.int(minRooms, maxRooms);
+			while (roomsToBuild > 0)
 			{
 				var w:Int = _rnd.int(minRoomSize, maxRoomSize);
 				var h:Int = _rnd.int(minRoomSize, maxRoomSize);
@@ -64,7 +65,11 @@ class MapGen
 					}
 				}
 
-				if (goodRoom) rooms.push(r);
+				if (goodRoom)
+				{
+					roomsToBuild--;
+					rooms.push(r);
+				}
 			}
 
 			for (r in rooms)
