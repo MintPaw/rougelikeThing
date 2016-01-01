@@ -33,6 +33,7 @@ class MapGen
 
 		{ // Construct empty map
 			if (debug) trace("Creating " + mapWidth + "x" + mapHeight + " empty map");
+
 			for (i in 0...mapHeight) 
 			{
 				m.push([]);
@@ -41,6 +42,8 @@ class MapGen
 		}
 
 		{ // Construct random rooms
+			if (debug) trace("Creating rooms");
+
 			rooms = [];
 			for (i in 0..._rnd.int(minRooms, maxRooms))
 			{
@@ -71,8 +74,10 @@ class MapGen
 		r.centreX = Std.int((r.x0 + r.x1) / 2);
 		r.centreY = Std.int((r.y0 + r.y1) / 2);
 
-		r.ratio = Std.int(r.w/r.h*100);
+		r.ratio = Math.round(r.w/r.h*100);
 		if (r.ratio > 1) r.ratio -= 1;
+
+		if (debug) trace('Creating room $x,$y ${w}x$h ratio ${r.ratio}');
 
 		return r;
 	}
