@@ -39,7 +39,7 @@ class MapGen
 		}
 
 		{ // Construct random rooms
-			//totalRooms = 
+			totalRooms = _rnd.int(minRooms, maxRooms);
 		}
 
 		return m;
