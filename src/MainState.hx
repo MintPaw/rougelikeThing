@@ -24,6 +24,7 @@ class MainState extends FlxState
 		MapGen.maxRooms = 12;
 		MapGen.minRoomSize = 4;
 		MapGen.maxRoomSize = 9;
+		// TODO(mint): Make ratios respected
 		MapGen.minRoomRatio = 40;
 		MapGen.maxRoomRatio = 100;
 

@@ -73,9 +73,9 @@ class MapGen
 			}
 
 			for (r in rooms)
-				for (i in 0...r.w)
-					for (j in 0...r.h)
-						m[r.x0 + i][r.y0 + j] = GROUND;
+				for (i in r.x0...r.x1)
+					for (j in r.y0...r.y1)
+						m[i][j] = GROUND;
 		}
 
 		return m;
@@ -95,6 +95,8 @@ class MapGen
 		r.centreX = Std.int((r.x0 + r.x1) / 2);
 		r.centreY = Std.int((r.y0 + r.y1) / 2);
 		r.ratio = Math.round(r.w/r.h*100);
+		r.hallExitX = _rnd.int(r.x0, r.x1);
+		r.hallExitY = _rnd.int(r.y0, r.y1);
 
 		if (debug) trace('Creating room $x,$y ${w}x$h ratio ${r.ratio}');
 
@@ -119,5 +121,8 @@ typedef Room =
 	?h:Int,
 	?centreX:Int,
 	?centreY:Int,
-	?ratio:Int
+	?ratio:Int,
+
+	?hallExitX:Int,
+	?hallExitY:Int
 }
