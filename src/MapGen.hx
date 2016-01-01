@@ -9,6 +9,10 @@ class MapGen
 	public static var mapHeight:Int;
 	public static var minRooms:Int;
 	public static var maxRooms:Int;
+	public static var minRoomSize:Int;
+	public static var maxRoomSize:Int;
+	public static var minRoomRatio:Int;
+	public static var maxRoomRatio:Int;
 
 	public static var totalRooms:Int;
 

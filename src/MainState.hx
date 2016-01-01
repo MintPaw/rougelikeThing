@@ -18,6 +18,12 @@ class MainState extends FlxState
 
 		MapGen.mapWidth = 100;
 		MapGen.mapHeight = 100;
+		MapGen.minRooms = 3;
+		MapGen.maxRooms = 6;
+		MapGen.minRoomSize = 2;
+		MapGen.maxRoomSize = 5;
+		MapGen.minRoomRatio = 40;
+		MapGen.maxRoomRatio = 100;
 
 		var map:Array<Array<Int>> = MapGen.gen();
 		
