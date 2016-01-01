@@ -53,7 +53,18 @@ class MapGen
 				var y:Int = _rnd.int(0, mapHeight - h);
 
 				var r:Room = createRoom(x, y, w, h);
-				rooms.push(r);
+
+				var goodRoom:Bool = true;
+				for (otherRoom in rooms)
+				{
+					if (roomsIntersect(r, otherRoom))
+					{
+						goodRoom = false;
+						break;
+					}
+				}
+
+				if (goodRoom) rooms.push(r);
 			}
 
 			for (r in rooms)
@@ -83,6 +94,12 @@ class MapGen
 		if (debug) trace('Creating room $x,$y ${w}x$h ratio ${r.ratio}');
 
 		return r;
+	}
+
+	private static function roomsIntersect(r0:Room, r1:Room):Bool
+	{
+		return (r0.x0 <= r1.x1 && r0.x1 >= r1.x0 &&
+				r0.y0 <= r1.y1 && r0.y1 >= r1.y0);
 	}
 }
 
