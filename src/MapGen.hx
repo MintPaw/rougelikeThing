@@ -27,4 +27,34 @@ class MapGen
 
 		return m;
 	}
+
+	private static function createRoom(x:Int, y:Int, w:Int, h:Int):Room
+	{
+		var r:Room =
+		{
+			x0: x,
+			x1: x+w,
+			y0: y,
+			y1: y+h,
+			w: w,
+			h: h
+		};
+		r.centreX = Std.int((r.x0 + r.x1) / 2);
+		r.centreY = Std.int((r.y0 + r.y1) / 2);
+
+		return r;
+	}
+}
+
+typedef Room =
+{
+	?x0:Int,
+	?x1:Int,
+	?y0:Int,
+	?y1:Int,
+
+	?w:Int,
+	?h:Int,
+	?centreX:Int,
+	?centreY:Int
 }
