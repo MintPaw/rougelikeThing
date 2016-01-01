@@ -7,6 +7,10 @@ class MapGen
 
 	public static var mapWidth:Int;
 	public static var mapHeight:Int;
+	public static var minRooms:Int;
+	public static var maxRooms:Int;
+
+	public static var totalRooms:Int;
 
 	public function new()
 	{
