@@ -17,8 +17,8 @@ class MainState extends FlxState
 		super.create();
 		haxe.Log.trace = myTrace;
 
-		MapGen.mapWidth = 100;
-		MapGen.mapHeight = 100;
+		MapGen.mapWidth = 20;
+		MapGen.mapHeight = 20;
 		MapGen.minRooms = 3;
 		MapGen.maxRooms = 6;
 		MapGen.minRoomSize = 2;
@@ -29,13 +29,16 @@ class MainState extends FlxState
 		var map:Array<Array<Int>> = MapGen.gen();
 		
 		var tilemap:FlxTilemap = new FlxTilemap();
-		tilemap.loadMapFrom2DArray( 
+		tilemap.loadMapFrom2DArray(
 				map,
 			 	"assets/img/tilemap.png",
 				32,
-				32);
+				32,
+				null,
+				1);
 		add(tilemap);
 	}
+	
 
 	private function myTrace(d:Dynamic, ?i:Null<haxe.PosInfos>):Void
 	{

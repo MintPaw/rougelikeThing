@@ -4,8 +4,8 @@ import flixel.math.FlxRandom;
 
 class MapGen
 {
-	public static var GROUND:Int = 0;
-	public static var WALL:Int = 1;
+	public static var GROUND:Int = 1;
+	public static var WALL:Int = 2;
 
 	public static var mapWidth:Int;
 	public static var mapHeight:Int;
@@ -37,7 +37,7 @@ class MapGen
 			for (i in 0...mapHeight) 
 			{
 				m.push([]);
-				for (i in 0...mapWidth) m[m.length-1].push(1);
+				for (i in 0...mapWidth) m[m.length-1].push(WALL);
 			}
 		}
 
@@ -55,6 +55,11 @@ class MapGen
 				var r:Room = createRoom(x, y, w, h);
 				rooms.push(r);
 			}
+
+			for (r in rooms)
+				for (i in 0...r.w)
+					for (j in 0...r.h)
+						m[r.x0 + i][r.y0 + j] = GROUND;
 		}
 
 		return m;
@@ -74,7 +79,7 @@ class MapGen
 		r.centreX = Std.int((r.x0 + r.x1) / 2);
 		r.centreY = Std.int((r.y0 + r.y1) / 2);
 
-		r.ratio = Math.round(r.w/r.h*100)
+		r.ratio = Math.round(r.w/r.h*100);
 
 		if (debug) trace('Creating room $x,$y ${w}x$h ratio ${r.ratio}');
 
