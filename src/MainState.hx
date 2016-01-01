@@ -15,6 +15,7 @@ class MainState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+		haxe.Log.trace = myTrace;
 
 		MapGen.mapWidth = 100;
 		MapGen.mapHeight = 100;
@@ -34,5 +35,11 @@ class MainState extends FlxState
 				32,
 				32);
 		add(tilemap);
+	}
+
+	private function myTrace(d:Dynamic, ?i:Null<haxe.PosInfos>):Void
+	{
+		FlxG.log.add(
+				i.lineNumber + ": " + i.className + "." + i.methodName + " => "	+ d);
 	}
 }

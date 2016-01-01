@@ -16,6 +16,7 @@ class MapGen
 	public static var minRoomRatio:Int;
 	public static var maxRoomRatio:Int;
 
+	public static var debug:Bool = true;
 	public static var rooms:Array<Room>;
 
 	private static var _rnd:FlxRandom;
@@ -31,6 +32,7 @@ class MapGen
 		var m:Array<Array<Int>> = [];
 
 		{ // Construct empty map
+			if (debug) trace("Creating " + mapWidth + "x" + mapHeight + " empty map");
 			for (i in 0...mapHeight) 
 			{
 				m.push([]);
