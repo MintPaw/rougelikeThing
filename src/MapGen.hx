@@ -1,5 +1,7 @@
 package;
 
+import flixel.math.FlxRandom;
+
 class MapGen
 {
 	public static var GROUND:Int = 0;
@@ -16,17 +18,28 @@ class MapGen
 
 	public static var totalRooms:Int;
 
+	private static var _rnd:FlxRandom;
+
 	public function new()
 	{
+		trace("Do not construct");
 	}
 
-	public static function gen():Array<Array<Int>>
+	public static function gen(seed:Int = -1):Array<Array<Int>>
 	{
+		_rnd = new FlxRandom(seed == -1 ? null : seed);
 		var m:Array<Array<Int>> = [];
-		for (i in 0...mapHeight) 
-		{
-			m.push([]);
-			for (i in 0...mapWidth) m[m.length-1].push(1);
+
+		{ // Construct empty map
+			for (i in 0...mapHeight) 
+			{
+				m.push([]);
+				for (i in 0...mapWidth) m[m.length-1].push(1);
+			}
+		}
+
+		{ // Construct random rooms
+			//totalRooms = 
 		}
 
 		return m;
