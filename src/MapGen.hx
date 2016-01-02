@@ -106,8 +106,23 @@ class MapGen
 		return r;
 	}
 
-	private static function createHall():Void
+	private static function createHall(x:Int, y:Int, len:Int, dir:Int):Void
 	{
+		var h:Hall = {};
+		h.x0 = x;
+		h.y0 = y;
+		h.length = len;
+
+		if (dir == HORIZONTAL)
+		{
+			h.x1 = x + len;
+			h.y1 = y;
+		} else {
+			h.x1 = x;
+			h.y1 = y + len;
+		}
+
+		//for (r in rooms)
 		/*
 		private function hCorridor(x1:Int, x2:Int, y) {
 			for (x in Std.int(Math.min(x1, x2))...Std.int(Math.max(x1, x2)) + 1) {
@@ -127,6 +142,11 @@ class MapGen
 	{
 		return (r0.x0 <= r1.x1 && r0.x1 >= r1.x0 &&
 				r0.y0 <= r1.y1 && r0.y1 >= r1.y0);
+	}
+
+	private static function inRoom(x:Int, y:Int, r:Room):Bool
+	{
+		return (x > r.x0 && x < r.x1 && y > r.y0 && y < r.y1);
 	}
 }
 
@@ -156,6 +176,6 @@ typedef Hall =
 	?dir:Int,
 
 	?length:Int,
-	r0:Room,
-	r1:Room
+	?r0:Room,
+	?r1:Room
 }
