@@ -79,6 +79,14 @@ class MapGen
 				for (i in r.x0...r.x1)
 					for (j in r.y0...r.y1)
 						m[i][j] = GROUND;
+
+			{ // Connect the rooms
+				if (rooms.length > 1)
+				{
+					var otherRoom:Room = rooms[rooms.length - 2];
+					// Connect rooms
+				}
+			}
 		}
 
 		return m;
@@ -122,7 +130,10 @@ class MapGen
 			h.y1 = y + len;
 		}
 
-		//for (r in rooms)
+		for (r in rooms)
+		{
+			if (inRoom(h.x0, h.y0, r)) h.r0 = r;
+		}
 		/*
 		private function hCorridor(x1:Int, x2:Int, y) {
 			for (x in Std.int(Math.min(x1, x2))...Std.int(Math.max(x1, x2)) + 1) {
@@ -176,6 +187,5 @@ typedef Hall =
 	?dir:Int,
 
 	?length:Int,
-	?r0:Room,
-	?r1:Room
+	?r0:Room
 }
