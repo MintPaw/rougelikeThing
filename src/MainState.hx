@@ -71,8 +71,9 @@ class MainState extends FlxState
 
 	private function genTest():Void
 	{
-
 		var s:Float = haxe.Timer.stamp();
-		trace(s);
+		var t:Int = 100;
+		for (i in 0...t) MapGen.gen();
+		trace((haxe.Timer.stamp() - s)*1000 + "ms for " + t + " maps.");
 	}
 }
