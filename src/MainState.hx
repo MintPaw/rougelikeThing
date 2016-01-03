@@ -6,6 +6,7 @@ import flixel.tile.FlxTilemap;
 
 class MainState extends FlxState
 {
+	private static var TRACE:Dynamic;
 
 	public function new()
 	{
@@ -15,13 +16,18 @@ class MainState extends FlxState
 	override public function create():Void
 	{
 		super.create();
-		//haxe.Log.trace = myTrace;
+		if (TRACE == null)
+		{
+			TRACE = haxe.Log.trace;
+			haxe.Log.trace = myTrace;
+		}
+
 		FlxG.camera.bgColor = 0xFFFF00FF;
 
 		MapGen.mapWidth = 30;
 		MapGen.mapHeight = 30;
 		MapGen.minRooms = 8;
-		MapGen.maxRooms = 12;
+		MapGen.maxRooms = 13;
 		//MapGen.minRooms = 0;
 		//MapGen.maxRooms = 0;
 		MapGen.minRoomSize = 4;
@@ -53,11 +59,20 @@ class MainState extends FlxState
 		if (FlxG.keys.pressed.LEFT) FlxG.camera.scroll.x -= scrollSpeed;
 		if (FlxG.keys.pressed.RIGHT) FlxG.camera.scroll.x += scrollSpeed;
 		if (FlxG.keys.pressed.SPACE) FlxG.resetState();
+		if (FlxG.keys.pressed.G) genTest();
 	}
 
 	private function myTrace(d:Dynamic, ?i:Null<haxe.PosInfos>):Void
 	{
 		FlxG.log.add(
 				i.lineNumber + ": " + i.className + "." + i.methodName + " => "	+ d);
+		TRACE(d);
+	}
+
+	private function genTest():Void
+	{
+
+		var s:Float = haxe.Timer.stamp();
+		trace(s);
 	}
 }
