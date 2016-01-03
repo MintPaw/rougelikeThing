@@ -3,6 +3,7 @@ package;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.tile.FlxTilemap;
+import flixel.util.FlxStringUtil;
 
 class MainState extends FlxState
 {
@@ -24,34 +25,29 @@ class MainState extends FlxState
 
 		FlxG.camera.bgColor = 0xFFFF00FF;
 
-		MapGen.mapWidth = 30;
-		MapGen.mapHeight = 30;
-		MapGen.minRooms = 11;
-		MapGen.maxRooms = 16;
-		//MapGen.minRooms = 0;
-		//MapGen.maxRooms = 0;
-		MapGen.minRoomSize = 4;
-		MapGen.maxRoomSize = 9;
-		// TODO(mint): Make ratios respected
-		MapGen.minRoomRatio = 40;
-		MapGen.maxRoomRatio = 100;
-
-		var map:Array<Array<Int>> = MapGen.gen();
-		
-		var tilemap:FlxTilemap = new FlxTilemap();
-		tilemap.loadMapFrom2DArray(
-				map,
-			 	"assets/img/tilemap.png",
-				32,
-				32,
-				null,
+		var ROOM_WIDTH:Int = 80;
+		var ROOM_HEIGHT:Int = 60;
+		var TILE_WIDTH:Int = 32;
+		var TILE_HEIGHT:Int = 32;
+		var _dungeon:MiscDungeonGenerator	= new MiscDungeonGenerator();
+		// mapWidth=80, mapHeight=80, minSize=3, maxSize=11, fail=100, corrBias=5,
+		// maxRooms=60
+		_dungeon.generate(ROOM_WIDTH, ROOM_HEIGHT, 3, 11, 400, 50, 40);
+		var map:FlxTilemap = new FlxTilemap();
+		map.loadMap( 
+				FlxStringUtil.arrayToCSV(_dungeon.getFlixelData(), ROOM_WIDTH),
+				"assets/img/tilemap.png",
+				TILE_WIDTH,
+				TILE_HEIGHT,
+				FlxTilemap.OFF,
 				1);
-		add(tilemap);
+		
+		add(map);
 	}
 
-	override public function update(elapsed:Float):Void
+	override public function update():Void
 	{
-		super.update(elapsed);
+		super.update();
 
 		var scrollSpeed:Int = 20;
 		if (FlxG.keys.pressed.UP) FlxG.camera.scroll.y -= scrollSpeed;
@@ -73,7 +69,7 @@ class MainState extends FlxState
 	{
 		var s:Float = haxe.Timer.stamp();
 		var t:Int = 10;
-		for (i in 0...t) MapGen.gen();
+		//for (i in 0...t) MapGen.gen();
 		trace((haxe.Timer.stamp() - s)*1000 + "ms for " + t + " maps.");
 	}
 }
