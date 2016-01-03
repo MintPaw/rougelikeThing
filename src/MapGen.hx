@@ -27,7 +27,7 @@ class MapGen
 
 	private static var _mapHistory:Array<Array<Array<Int>>> = [];
 	private static var _rnd:FlxRandom;
-	private static var _roomsToBuild:Int = -1;
+	private static var _roomsToBuild:Int;
 	private static var _roomFail:Int;
 
 	public function new()
@@ -53,20 +53,12 @@ class MapGen
 		{ // Construct random rooms
 			if (debug) trace("Creating rooms");
 
-			if (_roomsToBuild == -1)
-			{
-				rooms = [];
-				_roomsToBuild = _rnd.int(minRooms, maxRooms);
-				_roomFail = 0;
-			}
+			rooms = [];
+			_roomsToBuild = _rnd.int(minRooms, maxRooms);
+			_roomFail = 0;
 
 			while (_roomsToBuild > 0)
 			{
-
-				//trace(_roomsToBuild + "|"+ rooms.length);
-				///*
-				//*/
-
 				var w:Int = _rnd.int(minRoomSize, maxRoomSize);
 				var h:Int = _rnd.int(minRoomSize, maxRoomSize);
 				var x:Int = _rnd.int(0, mapWidth - w);
@@ -115,8 +107,6 @@ class MapGen
 				for (i in r.x0...r.x1)
 					for (j in r.y0...r.y1)
 						m[j][i] = GROUND;
-
-			_roomsToBuild = -1;
 		}
 
 		return m;
