@@ -85,8 +85,8 @@ class MapGen
 						var toRemove:Int = Std.int(_roomFail/100);
 						if (toRemove > 0)
 						{
-							trace(_roomsToBuild + " left, failed " + _roomFail +
-									" removing " + toRemove);
+							//trace(_roomsToBuild + " left, failed " + _roomFail +
+							//" removing " + toRemove);
 							for (i in 0...toRemove)
 							{
 								if (rooms.length > 0)
@@ -105,7 +105,7 @@ class MapGen
 				if (goodRoom)
 				{
 					_roomsToBuild--;
-					trace("Good, cut down from " + _roomFail + " to " + (_roomFail * 0.1));
+					//trace("Good, cut down from " + _roomFail + " to " + (_roomFail * 0.1));
 					_roomFail = Std.int(_roomFail * 0.1);
 					rooms.push(r);
 				}

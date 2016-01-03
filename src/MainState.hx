@@ -26,8 +26,8 @@ class MainState extends FlxState
 
 		MapGen.mapWidth = 30;
 		MapGen.mapHeight = 30;
-		MapGen.minRooms = 8;
-		MapGen.maxRooms = 13;
+		MapGen.minRooms = 11;
+		MapGen.maxRooms = 16;
 		//MapGen.minRooms = 0;
 		//MapGen.maxRooms = 0;
 		MapGen.minRoomSize = 4;
