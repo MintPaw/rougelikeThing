@@ -7,8 +7,10 @@ class MapGen
 	public static var GROUND:Int = 1;
 	public static var WALL:Int = 2;
 
-	public static var HORIZONTAL:Int = 0;
-	public static var VERTICAL:Int = 1;
+	public static var UP:Int = 0;
+	public static var DOWN:Int = 1;
+	public static var LEFT:Int = 2;
+	public static var RIGHT:Int = 3;
 
 	public static var mapWidth:Int;
 	public static var mapHeight:Int;
@@ -21,8 +23,10 @@ class MapGen
 
 	public static var debug:Bool = true;
 	public static var rooms:Array<Room>;
+	public static var halls:Array<Hall>;
 
 	private static var _rnd:FlxRandom;
+	private static var _roomsToBuild:Int = -1;
 
 	public function new()
 	{
@@ -47,9 +51,12 @@ class MapGen
 		{ // Construct random rooms
 			if (debug) trace("Creating rooms");
 
-			rooms = [];
-			var roomsToBuild:Int = _rnd.int(minRooms, maxRooms);
-			while (roomsToBuild > 0)
+			if (_roomsToBuild == -1)
+			{
+				rooms = [];
+				_roomsToBuild = _rnd.int(minRooms, maxRooms);
+			}
+			while (_roomsToBuild > 0)
 			{
 				var w:Int = _rnd.int(minRoomSize, maxRoomSize);
 				var h:Int = _rnd.int(minRoomSize, maxRoomSize);
@@ -70,23 +77,17 @@ class MapGen
 
 				if (goodRoom)
 				{
-					roomsToBuild--;
+					_roomsToBuild--;
 					rooms.push(r);
 				}
 			}
+			_roomsToBuild = -1;
 
 			for (r in rooms)
 				for (i in r.x0...r.x1)
 					for (j in r.y0...r.y1)
 						m[i][j] = GROUND;
 
-			{ // Connect the rooms
-				if (rooms.length > 1)
-				{
-					var otherRoom:Room = rooms[rooms.length - 2];
-					// Connect rooms
-				}
-			}
 		}
 
 		return m;
@@ -109,44 +110,21 @@ class MapGen
 		r.hallExitX = _rnd.int(r.x0, r.x1);
 		r.hallExitY = _rnd.int(r.y0, r.y1);
 
-		if (debug) trace('Creating room $x,$y ${w}x$h ratio ${r.ratio}');
+		//if (debug) trace('Creating room $x,$y ${w}x$h ratio ${r.ratio}');
 
 		return r;
 	}
 
-	private static function createHall(x:Int, y:Int, len:Int, dir:Int):Void
+	private static function createHall(x:Int, y:Int, len:Int, dir:Int):Hall
 	{
 		var h:Hall = {};
-		h.x0 = x;
-		h.y0 = y;
+		h.x = x;
+		h.y = y;
 		h.length = len;
+		h.dir = dir;
+		for (r in rooms) if (inRoom(h.x, h.y, r)) h.r = r;
 
-		if (dir == HORIZONTAL)
-		{
-			h.x1 = x + len;
-			h.y1 = y;
-		} else {
-			h.x1 = x;
-			h.y1 = y + len;
-		}
-
-		for (r in rooms)
-		{
-			if (inRoom(h.x0, h.y0, r)) h.r0 = r;
-		}
-		/*
-		private function hCorridor(x1:Int, x2:Int, y) {
-			for (x in Std.int(Math.min(x1, x2))...Std.int(Math.max(x1, x2)) + 1) {
-				map[x][y].setLoc(x, y);
-			}
-		}
-
-		private function vCorridor(y1:Int, y2:Int, x) {
-			for (y in Std.int(Math.min(y1, y2))...Std.int(Math.max(y1, y2)) + 1) {
-				map[x][y].setLoc(x, y);
-			}
-		}
-		*/
+		return h;
 	}
 
 	private static function roomsIntersect(r0:Room, r1:Room):Bool
@@ -180,12 +158,10 @@ typedef Room =
 
 typedef Hall =
 {
-	?x0:Int,
-	?x1:Int,
-	?y0:Int,
-	?y1:Int,
+	?x:Int,
+	?y:Int,
 	?dir:Int,
 
 	?length:Int,
-	?r0:Room
+	?r:Room
 }

@@ -15,13 +15,15 @@ class MainState extends FlxState
 	override public function create():Void
 	{
 		super.create();
-		haxe.Log.trace = myTrace;
+		//haxe.Log.trace = myTrace;
 		FlxG.camera.bgColor = 0xFFFF00FF;
 
 		MapGen.mapWidth = 30;
 		MapGen.mapHeight = 30;
 		MapGen.minRooms = 8;
 		MapGen.maxRooms = 12;
+		//MapGen.minRooms = 0;
+		//MapGen.maxRooms = 0;
 		MapGen.minRoomSize = 4;
 		MapGen.maxRoomSize = 9;
 		// TODO(mint): Make ratios respected
@@ -50,6 +52,7 @@ class MainState extends FlxState
 		if (FlxG.keys.pressed.DOWN) FlxG.camera.scroll.y += scrollSpeed;
 		if (FlxG.keys.pressed.LEFT) FlxG.camera.scroll.x -= scrollSpeed;
 		if (FlxG.keys.pressed.RIGHT) FlxG.camera.scroll.x += scrollSpeed;
+		if (FlxG.keys.pressed.SPACE) FlxG.resetState();
 	}
 
 	private function myTrace(d:Dynamic, ?i:Null<haxe.PosInfos>):Void
