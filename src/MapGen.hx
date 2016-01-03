@@ -25,8 +25,10 @@ class MapGen
 	public static var rooms:Array<Room>;
 	public static var halls:Array<Hall>;
 
+	private static var _mapHistory:Array<Array<Array<Int>>> = [];
 	private static var _rnd:FlxRandom;
 	private static var _roomsToBuild:Int = -1;
+	private static var _roomFail:Int;
 
 	public function new()
 	{
@@ -55,9 +57,16 @@ class MapGen
 			{
 				rooms = [];
 				_roomsToBuild = _rnd.int(minRooms, maxRooms);
+				_roomFail = 0;
 			}
+
 			while (_roomsToBuild > 0)
 			{
+
+				//trace(_roomsToBuild + "|"+ rooms.length);
+				///*
+				//*/
+
 				var w:Int = _rnd.int(minRoomSize, maxRoomSize);
 				var h:Int = _rnd.int(minRoomSize, maxRoomSize);
 				var x:Int = _rnd.int(0, mapWidth - w);
@@ -71,6 +80,24 @@ class MapGen
 					if (roomsIntersect(r, otherRoom))
 					{
 						goodRoom = false;
+						_roomFail++;
+
+						var toRemove:Int = Std.int(_roomFail/100);
+						if (toRemove > 0)
+						{
+							trace(_roomsToBuild + " left, failed " + _roomFail +
+									" removing " + toRemove);
+							for (i in 0...toRemove)
+							{
+								if (rooms.length > 0)
+								{
+									rooms.pop();
+									_roomsToBuild++;
+								}
+								if (rooms.length <= 1) _roomFail = 0;
+							}
+						}
+
 						break;
 					}
 				}
@@ -78,16 +105,18 @@ class MapGen
 				if (goodRoom)
 				{
 					_roomsToBuild--;
+					trace("Good, cut down from " + _roomFail + " to " + (_roomFail * 0.1));
+					_roomFail = Std.int(_roomFail * 0.1);
 					rooms.push(r);
 				}
 			}
-			_roomsToBuild = -1;
 
 			for (r in rooms)
 				for (i in r.x0...r.x1)
 					for (j in r.y0...r.y1)
-						m[i][j] = GROUND;
+						m[j][i] = GROUND;
 
+			_roomsToBuild = -1;
 		}
 
 		return m;
