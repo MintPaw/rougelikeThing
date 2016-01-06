@@ -7,6 +7,14 @@ import flixel.util.FlxStringUtil;
 
 class MainState extends FlxState
 {
+	public static var mapWidth:Int;
+	public static var mapHeight:Int;
+	public static var minRoomSize:Int;
+	public static var maxRoomSize:Int;
+	public static var attempts:Int;
+	public static var corrPercent:Int;
+	public static var maxRooms:Int;
+
 	private static var TRACE:Dynamic;
 
 	public function new()
@@ -25,20 +33,32 @@ class MainState extends FlxState
 
 		FlxG.camera.bgColor = 0xFFFF00FF;
 
-		var ROOM_WIDTH:Int = 80;
-		var ROOM_HEIGHT:Int = 60;
-		var TILE_WIDTH:Int = 32;
-		var TILE_HEIGHT:Int = 32;
+		mapWidth = 80;
+		mapHeight = 80;
+		minRoomSize = 3;
+		maxRoomSize	= 11;
+		attempts = 100;
+		corrPercent = 5;
+		maxRooms = 60;
 		var _dungeon:MiscDungeonGenerator	= new MiscDungeonGenerator();
-		// mapWidth=80, mapHeight=80, minSize=3, maxSize=11, fail=100, corrBias=5,
-		// maxRooms=60
-		_dungeon.generate(ROOM_WIDTH, ROOM_HEIGHT, 3, 11, 400, 50, 40);
+		_dungeon.generate(
+				mapWidth,
+				mapHeight,
+				minRoomSize,
+				maxRoomSize,
+				attempts,
+				corrPercent,
+				maxRooms);
+
+		var mapData:Array<Int> = _dungeon.getFlixelData();
+		for (i in 0...mapData.length) mapData[i]++;
+
 		var map:FlxTilemap = new FlxTilemap();
 		map.loadMap( 
-				FlxStringUtil.arrayToCSV(_dungeon.getFlixelData(), ROOM_WIDTH),
+				FlxStringUtil.arrayToCSV(mapData, mapWidth),
 				"assets/img/tilemap.png",
-				TILE_WIDTH,
-				TILE_HEIGHT,
+				32,
+				32,
 				FlxTilemap.OFF,
 				1);
 		
