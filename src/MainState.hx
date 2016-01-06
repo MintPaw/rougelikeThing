@@ -7,14 +7,6 @@ import flixel.util.FlxStringUtil;
 
 class MainState extends FlxState
 {
-	public static var mapWidth:Int;
-	public static var mapHeight:Int;
-	public static var minRoomSize:Int;
-	public static var maxRoomSize:Int;
-	public static var attempts:Int;
-	public static var corrPercent:Int;
-	public static var maxRooms:Int;
-
 	private static var TRACE:Dynamic;
 
 	public function new()
@@ -33,13 +25,14 @@ class MainState extends FlxState
 
 		FlxG.camera.bgColor = 0xFFFF00FF;
 
-		mapWidth = 80;
-		mapHeight = 80;
-		minRoomSize = 3;
-		maxRoomSize	= 11;
-		attempts = 100;
-		corrPercent = 5;
-		maxRooms = 60;
+		var mapWidth:Int = 80;
+		var mapHeight:Int = 80;
+		var minRoomSize:Int = 3;
+		var maxRoomSize:Int = 11;
+		var attempts:Int = 100;
+		var corrPercent:Int = 5;
+		var maxRooms:Int = 60;
+
 		var _dungeon:MiscDungeonGenerator	= new MiscDungeonGenerator();
 		_dungeon.generate(
 				mapWidth,
@@ -75,7 +68,6 @@ class MainState extends FlxState
 		if (FlxG.keys.pressed.LEFT) FlxG.camera.scroll.x -= scrollSpeed;
 		if (FlxG.keys.pressed.RIGHT) FlxG.camera.scroll.x += scrollSpeed;
 		if (FlxG.keys.pressed.SPACE) FlxG.resetState();
-		if (FlxG.keys.pressed.G) genTest();
 	}
 
 	private function myTrace(d:Dynamic, ?i:Null<haxe.PosInfos>):Void
@@ -83,13 +75,5 @@ class MainState extends FlxState
 		FlxG.log.add(
 				i.lineNumber + ": " + i.className + "." + i.methodName + " => "	+ d);
 		TRACE(d);
-	}
-
-	private function genTest():Void
-	{
-		var s:Float = haxe.Timer.stamp();
-		var t:Int = 10;
-		//for (i in 0...t) MapGen.gen();
-		trace((haxe.Timer.stamp() - s)*1000 + "ms for " + t + " maps.");
 	}
 }
