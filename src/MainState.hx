@@ -17,43 +17,51 @@ class MainState extends FlxState
 	override public function create():Void
 	{
 		super.create();
-		if (TRACE == null)
-		{
-			TRACE = haxe.Log.trace;
-			haxe.Log.trace = myTrace;
+		{ // Setup misc
+			if (TRACE == null)
+			{
+				TRACE = haxe.Log.trace;
+				haxe.Log.trace = myTrace;
+			}
+
+			FlxG.camera.bgColor = 0xFFFF00FF;
 		}
 
-		FlxG.camera.bgColor = 0xFFFF00FF;
-
+		var mapData:Array<Int>;
 		var mapWidth:Int = 80;
-		var mapHeight:Int = 80;
-		var minRoomSize:Int = 3;
-		var maxRoomSize:Int = 11;
-		var attempts:Int = 100;
-		var corrPercent:Int = 5;
-		var maxRooms:Int = 60;
+		{ // Generate map
+			var mapHeight:Int = 80;
+			var minRoomSize:Int = 3;
+			var maxRoomSize:Int = 11;
+			var attempts:Int = 100;
+			var corrPercent:Int = 5;
+			var maxRooms:Int = 60;
 
-		var _dungeon:MiscDungeonGenerator	= new MiscDungeonGenerator();
-		_dungeon.generate(
-				mapWidth,
-				mapHeight,
-				minRoomSize,
-				maxRoomSize,
-				attempts,
-				corrPercent,
-				maxRooms);
+			var _dungeon:MiscDungeonGenerator	= new MiscDungeonGenerator();
+			_dungeon.generate(
+					mapWidth,
+					mapHeight,
+					minRoomSize,
+					maxRoomSize,
+					attempts,
+					corrPercent,
+					maxRooms);
 
-		var mapData:Array<Int> = _dungeon.getFlixelData();
-		for (i in 0...mapData.length) mapData[i]++;
+			mapData = _dungeon.getFlixelData();
+			for (i in 0...mapData.length) mapData[i]++;
+		}
 
-		var map:FlxTilemap = new FlxTilemap();
-		map.loadMap( 
-				FlxStringUtil.arrayToCSV(mapData, mapWidth),
-				"assets/img/tilemap.png",
-				32,
-				32,
-				FlxTilemap.OFF,
-				1);
+		var map:FlxTilemap;
+		{ // Load map
+			map = new FlxTilemap();
+			map.loadMap( 
+					FlxStringUtil.arrayToCSV(mapData, mapWidth),
+					"assets/img/tilemap.png",
+					32,
+					32,
+					FlxTilemap.OFF,
+					1);
+		}
 		
 		add(map);
 	}
