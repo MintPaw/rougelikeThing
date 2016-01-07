@@ -69,13 +69,17 @@ class MainState extends FlxState
 	override public function update():Void
 	{
 		super.update();
+		{ // Player controls
+		}
 
-		var scrollSpeed:Int = 20;
-		if (FlxG.keys.pressed.UP) FlxG.camera.scroll.y -= scrollSpeed;
-		if (FlxG.keys.pressed.DOWN) FlxG.camera.scroll.y += scrollSpeed;
-		if (FlxG.keys.pressed.LEFT) FlxG.camera.scroll.x -= scrollSpeed;
-		if (FlxG.keys.pressed.RIGHT) FlxG.camera.scroll.x += scrollSpeed;
-		if (FlxG.keys.pressed.SPACE) FlxG.resetState();
+		{ // Scroll map
+			var scrollSpeed:Int = 20;
+			if (FlxG.keys.pressed.W) FlxG.camera.scroll.y -= scrollSpeed;
+			if (FlxG.keys.pressed.S) FlxG.camera.scroll.y += scrollSpeed;
+			if (FlxG.keys.pressed.A) FlxG.camera.scroll.x -= scrollSpeed;
+			if (FlxG.keys.pressed.D) FlxG.camera.scroll.x += scrollSpeed;
+			if (FlxG.keys.pressed.SPACE) FlxG.resetState();
+		}
 	}
 
 	private function myTrace(d:Dynamic, ?i:Null<haxe.PosInfos>):Void
