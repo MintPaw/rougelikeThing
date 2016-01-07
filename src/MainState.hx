@@ -51,7 +51,12 @@ class MainState extends FlxState
 					maxRooms);
 
 			mapData = dungeon.getFlixelData();
-			for (i in 0...mapData.length) mapData[i]++;
+			for (i in 0...mapData.length)
+			{
+				if (mapData[i] == 4) mapData[i] = 5;
+				if (mapData[i] == 3) mapData[i] = 4;
+				mapData[i]++;
+			}
 		}
 
 		{ // Load map
