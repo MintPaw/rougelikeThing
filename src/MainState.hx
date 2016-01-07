@@ -4,6 +4,7 @@ import flixel.FlxState;
 import flixel.FlxG;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxStringUtil;
+import flixel.util.FlxPoint;
 
 class MainState extends FlxState
 {
@@ -81,7 +82,12 @@ class MainState extends FlxState
 	override public function update():Void
 	{
 		super.update();
+		var action:String = "";
 		{ // Player controls
+			if (FlxG.keys.pressed.UP) action = "up";
+			if (FlxG.keys.pressed.DOWN) action = "down";
+			if (FlxG.keys.pressed.LEFT) action = "left";
+			if (FlxG.keys.pressed.RIGHT) action = "right";
 		}
 
 		{ // Scroll map
@@ -91,6 +97,39 @@ class MainState extends FlxState
 			if (FlxG.keys.pressed.A) FlxG.camera.scroll.x -= scrollSpeed;
 			if (FlxG.keys.pressed.D) FlxG.camera.scroll.x += scrollSpeed;
 			if (FlxG.keys.pressed.SPACE) FlxG.resetState();
+		}
+
+		{ // Do action
+			if (action != "")
+			{
+				var playerTile:FlxPoint = FlxPoint.get();
+				playerTile.x = Math.round(_player.x / 32);
+				playerTile.y = Math.round(_player.y / 32);
+
+				if (action == "left"
+						|| action == "right"
+						|| action == "up"
+						|| action == "down")
+				{
+					var playerNewTile:FlxPoint = FlxPoint.get();
+					playerNewTile.copyFrom(playerTile);
+
+					if (action == "left") playerNewTile.x -= 1;
+					if (action == "right") playerNewTile.x += 1;
+					if (action == "up") playerNewTile.y -= 1;
+					if (action == "down") playerNewTile.y += 1;
+
+					if (_map.getTile(Std.int(playerNewTile.x), Std.int(playerNewTile.y)) == 1)
+					{
+						_player.x = playerNewTile.x*32 - _player.width / 2;
+						_player.y = playerNewTile.y*32 - _player.height / 2;
+					}
+
+					playerNewTile.put();
+				}
+
+				playerTile.put();
+			}
 		}
 	}
 
