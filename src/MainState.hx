@@ -69,10 +69,9 @@ class MainState extends FlxState
 
 		{ // Setup player
 			_player = new Player();
-			_player.x = (dungeon.roomList[0][2] + dungeon.roomList[0][1] / 2) * 32;
-			_player.x -= _player.width / 2;
-			_player.y = (dungeon.roomList[0][3] + dungeon.roomList[0][0] / 2) * 32;
-			_player.y -= _player.height / 2;
+			movePlayer(
+				dungeon.roomList[0][2] + dungeon.roomList[0][1] / 2, 
+				dungeon.roomList[0][3] + dungeon.roomList[0][0] / 2);
 		}
 		
 		add(_map);
@@ -84,10 +83,10 @@ class MainState extends FlxState
 		super.update();
 		var action:String = "";
 		{ // Player controls
-			if (FlxG.keys.pressed.UP) action = "up";
-			if (FlxG.keys.pressed.DOWN) action = "down";
-			if (FlxG.keys.pressed.LEFT) action = "left";
-			if (FlxG.keys.pressed.RIGHT) action = "right";
+			if (FlxG.keys.justPressed.UP) action = "up";
+			if (FlxG.keys.justPressed.DOWN) action = "down";
+			if (FlxG.keys.justPressed.LEFT) action = "left";
+			if (FlxG.keys.justPressed.RIGHT) action = "right";
 		}
 
 		{ // Scroll map
@@ -103,8 +102,8 @@ class MainState extends FlxState
 			if (action != "")
 			{
 				var playerTile:FlxPoint = FlxPoint.get();
-				playerTile.x = Math.round(_player.x / 32);
-				playerTile.y = Math.round(_player.y / 32);
+				playerTile.x = Math.floor(_player.x / 32);
+				playerTile.y = Math.floor(_player.y / 32);
 
 				if (action == "left"
 						|| action == "right"
@@ -119,10 +118,11 @@ class MainState extends FlxState
 					if (action == "up") playerNewTile.y -= 1;
 					if (action == "down") playerNewTile.y += 1;
 
-					if (_map.getTile(Std.int(playerNewTile.x), Std.int(playerNewTile.y)) == 1)
+					if (_map.getTile(
+								Std.int(playerNewTile.x),
+								Std.int(playerNewTile.y)) == 1)
 					{
-						_player.x = playerNewTile.x*32 - _player.width / 2;
-						_player.y = playerNewTile.y*32 - _player.height / 2;
+						movePlayer(playerNewTile.x, playerNewTile.y);
 					}
 
 					playerNewTile.put();
@@ -131,6 +131,12 @@ class MainState extends FlxState
 				playerTile.put();
 			}
 		}
+	}
+
+	private function movePlayer(x:Float, y:Float):Void
+	{
+		_player.x = Std.int(x)*32 + (32 - _player.width) / 2;
+		_player.y = Std.int(y)*32 + (32 - _player.height) / 2;
 	}
 
 	private function myTrace(d:Dynamic, ?i:Null<haxe.PosInfos>):Void
