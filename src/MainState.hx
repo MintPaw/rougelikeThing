@@ -9,6 +9,9 @@ class MainState extends FlxState
 {
 	private static var TRACE:Dynamic;
 
+	private var _player:Player;
+	private var _map:FlxTilemap;
+
 	public function new()
 	{
 		super();
@@ -29,6 +32,7 @@ class MainState extends FlxState
 
 		var mapData:Array<Int>;
 		var mapWidth:Int = 80;
+		var dungeon:MiscDungeonGenerator;
 		{ // Generate map
 			var mapHeight:Int = 80;
 			var minRoomSize:Int = 3;
@@ -37,8 +41,8 @@ class MainState extends FlxState
 			var corrPercent:Int = 5;
 			var maxRooms:Int = 60;
 
-			var _dungeon:MiscDungeonGenerator	= new MiscDungeonGenerator();
-			_dungeon.generate(
+			dungeon = new MiscDungeonGenerator();
+			dungeon.generate(
 					mapWidth,
 					mapHeight,
 					minRoomSize,
@@ -47,14 +51,13 @@ class MainState extends FlxState
 					corrPercent,
 					maxRooms);
 
-			mapData = _dungeon.getFlixelData();
+			mapData = dungeon.getFlixelData();
 			for (i in 0...mapData.length) mapData[i]++;
 		}
 
-		var map:FlxTilemap;
 		{ // Load map
-			map = new FlxTilemap();
-			map.loadMap( 
+			_map = new FlxTilemap();
+			_map.loadMap( 
 					FlxStringUtil.arrayToCSV(mapData, mapWidth),
 					"assets/img/tilemap.png",
 					32,
@@ -62,8 +65,17 @@ class MainState extends FlxState
 					FlxTilemap.OFF,
 					1);
 		}
+
+		{ // Setup player
+			_player = new Player();
+			_player.x = (dungeon.roomList[0][2] + dungeon.roomList[0][1] / 2) * 32;
+			_player.x -= _player.width / 2;
+			_player.y = (dungeon.roomList[0][3] + dungeon.roomList[0][0] / 2) * 32;
+			_player.y -= _player.height / 2;
+		}
 		
-		add(map);
+		add(_map);
+		add(_player);
 	}
 
 	override public function update():Void
