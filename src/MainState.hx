@@ -27,8 +27,6 @@ class MainState extends FlxState
 				TRACE = haxe.Log.trace;
 				haxe.Log.trace = myTrace;
 			}
-
-			FlxG.camera.bgColor = 0xFFFF00FF;
 		}
 
 		var mapData:Array<Int>;
@@ -67,6 +65,11 @@ class MainState extends FlxState
 					1);
 		}
 
+		{ // Setup camera
+			FlxG.camera.bgColor = 0xFFFF00FF;
+			FlxG.camera.setBounds(0, 0, _map.width, _map.height, true);
+		}
+
 		{ // Setup player
 			_player = new Player();
 			movePlayer(
@@ -87,6 +90,7 @@ class MainState extends FlxState
 			if (FlxG.keys.justPressed.DOWN) action = "down";
 			if (FlxG.keys.justPressed.LEFT) action = "left";
 			if (FlxG.keys.justPressed.RIGHT) action = "right";
+			FlxG.camera.follow(_player);
 		}
 
 		{ // Scroll map
