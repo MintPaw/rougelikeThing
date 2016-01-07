@@ -126,10 +126,14 @@ class MainState extends FlxState
 					if (action == "up") playerNewTile.y -= 1;
 					if (action == "down") playerNewTile.y += 1;
 
-					if (_map.getTile(
-								Std.int(playerNewTile.x),
-								Std.int(playerNewTile.y)) == 1)
+					var tileHit:Int =
+						_map.getTile(Std.int(playerNewTile.x), Std.int(playerNewTile.y));
+
+					if (tileHit == 1 || tileHit == 4)
 						movePlayer(playerNewTile.x, playerNewTile.y);
+
+					if (tileHit == 5)
+						_map.setTile(Std.int(playerNewTile.x), Std.int(playerNewTile.y), 4);
 
 					playerNewTile.put();
 				}
