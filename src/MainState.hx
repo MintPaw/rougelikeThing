@@ -95,7 +95,6 @@ class MainState extends FlxState
 			if (FlxG.keys.justPressed.DOWN) action = "down";
 			if (FlxG.keys.justPressed.LEFT) action = "left";
 			if (FlxG.keys.justPressed.RIGHT) action = "right";
-			FlxG.camera.follow(_player);
 		}
 
 		{ // Scroll map
@@ -130,13 +129,15 @@ class MainState extends FlxState
 					if (_map.getTile(
 								Std.int(playerNewTile.x),
 								Std.int(playerNewTile.y)) == 1)
-					{
 						movePlayer(playerNewTile.x, playerNewTile.y);
-					}
 
 					playerNewTile.put();
 				}
 
+				var playerPoint:FlxPoint = FlxPoint.get(_player.x, _player.y);
+				FlxG.camera.focusOn(playerPoint);
+
+				playerPoint.put();
 				playerTile.put();
 			}
 		}
