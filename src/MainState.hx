@@ -24,7 +24,6 @@ class MainState extends FlxState
 	private var _map:FlxTilemap;
 
 	private var _visionMap:FlxTilemap;
-	private var _historyMap:FlxTilemap;
 
 	public function new()
 	{
@@ -132,12 +131,8 @@ class MainState extends FlxState
 			if (FlxG.keys.justPressed.SPACE) FlxG.resetState();
 			if (FlxG.keys.justPressed.T)
 				_visionMap.visible = !_visionMap.visible;
-			if (FlxG.keys.justPressed.H)
-				_historyMap.visible = !_historyMap.visible;
 			if (FlxG.keys.justPressed.M)
 				_map.visible = !_map.visible;
-			if (FlxG.keys.justPressed.Z)
-				FlxG.camera.zoom = FlxG.camera.zoom == 1 ? 0.25 : 1;
 		}
 
 		{ // Scroll map
