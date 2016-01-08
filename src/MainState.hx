@@ -86,15 +86,17 @@ class MainState extends FlxState
 		}
 
 		{ // Setup vision
+			var g = FlxG.bitmap.add("assets/img/tilemap.png", true);
 			_visionMap = new FlxTilemap();
 			_visionMap.loadMap( 
 					FlxStringUtil.arrayToCSV(mapData, mapWidth),
-					"assets/img/tilemap.png",
+					g,
 					32,
 					32,
 					FlxTilemap.OFF,
 					1);
-			Reg.adjustColour(_visionMap.cachedGraphics.bitmap, 0, 0, 0, 64);
+
+			Reg.adjustColour(_visionMap.cachedGraphics.bitmap, 0, -0.5, 1, 0);
 			
 			for (i in 0..._map.totalTiles) _visionMap.setTileByIndex(i, WALL, true);
 		}
