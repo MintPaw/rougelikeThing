@@ -23,8 +23,8 @@ class MainState extends FlxState
 	private var _player:Player;
 	private var _map:FlxTilemap;
 
-	private var _visionArray:Array<Array<Int>>;
 	private var _visionSprite:FlxSprite;
+	private var _cachedVisionArray:Array<Int>;
 
 	public function new()
 	{
@@ -82,11 +82,17 @@ class MainState extends FlxState
 					FlxTilemap.OFF,
 					1);
 
+		}
+
+		{ // Setup vision
 			_visionSprite = new FlxSprite();
 			_visionSprite.makeGraphic(
 					Std.int(_map.width),
 				 	Std.int(_map.height),
 				 	0xFF333333);
+
+			_cachedVisionArray = [];
+			for (i in 0..._map.totalTiles) _cachedVisionArray[i] = 0;
 		}
 
 		{ // Setup camera
@@ -173,8 +179,26 @@ class MainState extends FlxState
 		{ // Step
 			if (step)
 			{
-				{ // FOV
+				{ // Vision
 					_visionSprite.pixels.lock();
+					
+					/*
+					for (i in 0..._cachedVisionArray.length)
+					{
+						if (_cachedVisionArray[i] == 0)
+						{
+							var r:Rectangle = new Rectangle(
+							_visionSprite.pixels.draw(
+									FlxG.stage,
+									null,
+									null,
+									null,
+									r);
+							_cachedVisionArray[i] = 1;
+						}
+					}
+					*/
+
 					for(i in 0...360)
 					{
 						var x:Float = Math.cos(i*0.01745);
@@ -187,7 +211,9 @@ class MainState extends FlxState
 						{
 							var r:Rectangle =
 								new Rectangle(Std.int(ox)*32, Std.int(oy)*32, 32, 32);
+
 							_visionSprite.pixels.fillRect(r, 0);
+							_cachedVisionArray[Std.int(oy*_map.widthInTiles+ox)] = 0;
 
 							if(
 									_map.getTile(Std.int(ox), Std.int(oy)) == WALL || 
