@@ -23,8 +23,8 @@ class MainState extends FlxState
 	private var _player:Player;
 	private var _map:FlxTilemap;
 
-	private var _visionSprite:FlxSprite;
-	private var _historySprite:FlxSprite;
+	private var _visionMap:FlxTilemap;
+	private var _historyMap:FlxTilemap;
 
 	public function new()
 	{
@@ -83,22 +83,19 @@ class MainState extends FlxState
 					32,
 					FlxTilemap.OFF,
 					1);
-
 		}
 
 		{ // Setup vision
-			_visionSprite = new FlxSprite();
-			_visionSprite.makeGraphic(
-					Std.int(_map.width),
-				 	Std.int(_map.height),
-				 	0xFF333333);
-
-			_historySprite = new FlxSprite();
-			_historySprite.makeGraphic(
-					Std.int(_map.width),
-				 	Std.int(_map.height),
-				 	0);
-			_historySprite.visible = false;
+			_visionMap = new FlxTilemap();
+			_visionMap.loadMap( 
+					FlxStringUtil.arrayToCSV(mapData, mapWidth),
+					"assets/img/tilemap.png",
+					32,
+					32,
+					FlxTilemap.OFF,
+					1);
+			
+			for (i in 0..._map.totalTiles) _visionMap.setTileByIndex(i, WALL, true);
 		}
 
 		{ // Setup camera
@@ -114,9 +111,8 @@ class MainState extends FlxState
 		}
 		
 		add(_map);
-		add(_historySprite);
 		add(_player);
-		add(_visionSprite);
+		add(_visionMap);
 	}
 
 	override public function update():Void
@@ -132,9 +128,9 @@ class MainState extends FlxState
 			if (FlxG.keys.justPressed.RIGHT) action = "right";
 			if (FlxG.keys.justPressed.SPACE) FlxG.resetState();
 			if (FlxG.keys.justPressed.T)
-				_visionSprite.visible = !_visionSprite.visible;
+				_visionMap.visible = !_visionMap.visible;
 			if (FlxG.keys.justPressed.H)
-				_historySprite.visible = !_historySprite.visible;
+				_historyMap.visible = !_historyMap.visible;
 			if (FlxG.keys.justPressed.M)
 				_map.visible = !_map.visible;
 			if (FlxG.keys.justPressed.Z)
@@ -194,9 +190,6 @@ class MainState extends FlxState
 			if (step)
 			{
 				{ // Vision
-					_visionSprite.pixels.lock();
-					_historySprite.pixels.lock();
-					
 					for(i in 0...360)
 					{
 						var x:Float = Math.cos(i*0.01745);
@@ -207,24 +200,7 @@ class MainState extends FlxState
 						var visionRadius:Int = 6;
 						for(i in 0...visionRadius)
 						{
-							var worldRect:Rectangle =
-								new Rectangle(Std.int(ox)*32, Std.int(oy)*32, 32, 32);
-
-							var cameraRect:Rectangle = worldRect.clone();
-							// cameraRect.x -= FlxG.camera.scroll.x;
-							// cameraRect.y -= FlxG.camera.scroll.y;
-
-							_visionSprite.pixels.fillRect(worldRect, 0);
-
-							var m = new openfl.geom.Matrix();
-							m.translate(FlxG.camera.scroll.x, FlxG.camera.scroll.y);
-
-							_historySprite.pixels.draw( 
-									FlxG.stage,
-									m,
-									null,
-									null,
-									cameraRect);
+							_visionMap.setTile(Std.int(ox), Std.int(oy), NONE);
 
 							if(
 									_map.getTile(Std.int(ox), Std.int(oy)) == WALL || 
@@ -235,12 +211,6 @@ class MainState extends FlxState
 							oy+=y;
 						}
 					}
-
-					_visionSprite.pixels.unlock();
-					_historySprite.pixels.unlock();
-
-					_visionSprite.dirty = true;
-					_historySprite.dirty = true;
 				}
 			}
 		}
