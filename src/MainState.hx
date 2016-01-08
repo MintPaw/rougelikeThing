@@ -21,6 +21,8 @@ class MainState extends FlxState
 
 	private var _player:Player;
 	private var _map:FlxTilemap;
+
+	private var _visionArray:Array<Array<Int>>;
 	private var _visionSprite:FlxSprite;
 
 	public function new()
@@ -171,26 +173,19 @@ class MainState extends FlxState
 			if (step)
 			{
 				{ // FOV
-					var x:Float;
-					var y:Float;
-
 					_visionSprite.pixels.lock();
 					for(i in 0...360)
 					{
-						x = Math.cos(i*0.01745);
-						y = Math.sin(i*0.01745);
+						var x:Float = Math.cos(i*0.01745);
+						var y:Float = Math.sin(i*0.01745);
 
 						var ox:Float = Std.int(_player.x/32) + 0.5;
 						var oy:Float = Std.int(_player.y/32) + 0.5;
 						var visionRadius:Int = 6;
 						for(i in 0...visionRadius)
 						{
-							//_visionSprite.setTile(Std.int(ox), Std.int(oy), NONE, true);
-							var r:openfl.geom.Rectangle = new openfl.geom.Rectangle(
-										Std.int(ox)*32,
-									 	Std.int(oy)*32,
-									 	32,
-									 	32);
+							var r:Rectangle =
+								new Rectangle(Std.int(ox)*32, Std.int(oy)*32, 32, 32);
 							_visionSprite.pixels.fillRect(r, 0);
 
 							if(
