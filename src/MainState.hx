@@ -1,7 +1,8 @@
 package;
 
-import flixel.FlxState;
 import flixel.FlxG;
+import flixel.FlxState;
+import flixel.FlxSprite;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxPoint;
@@ -20,7 +21,7 @@ class MainState extends FlxState
 
 	private var _player:Player;
 	private var _map:FlxTilemap;
-	private var _visionMap:FlxTilemap;
+	private var _visionSprite:FlxSprite;
 
 	public function new()
 	{
@@ -78,16 +79,11 @@ class MainState extends FlxState
 					FlxTilemap.OFF,
 					1);
 
-			_visionMap = new FlxTilemap();
-			_visionMap.loadMap( 
-					FlxStringUtil.arrayToCSV(mapData, mapWidth),
-					"assets/img/tilemap.png",
-					32,
-					32,
-					FlxTilemap.OFF,
-					1);
-			for (i in 0..._visionMap.totalTiles)
-				_visionMap.setTileByIndex(i, WALL, true);
+			_visionSprite = new FlxSprite();
+			_visionSprite.makeGraphic(
+					Std.int(_map.width),
+				 	Std.int(_map.height),
+				 	0xFF333333);
 		}
 
 		{ // Setup camera
@@ -104,7 +100,7 @@ class MainState extends FlxState
 		
 		add(_map);
 		add(_player);
-		add(_visionMap);
+		add(_visionSprite);
 	}
 
 	override public function update():Void
@@ -118,7 +114,7 @@ class MainState extends FlxState
 			if (FlxG.keys.justPressed.DOWN) action = "down";
 			if (FlxG.keys.justPressed.LEFT) action = "left";
 			if (FlxG.keys.justPressed.RIGHT) action = "right";
-			if (FlxG.keys.justPressed.T) _visionMap.visible = !_visionMap.visible;
+			if (FlxG.keys.justPressed.T) _visionSprite.visible = !_visionSprite.visible;
 		}
 
 		{ // Scroll map
@@ -175,12 +171,10 @@ class MainState extends FlxState
 			if (step)
 			{
 				{ // FOV
-					for (i in 0..._visionMap.totalTiles)
-						_visionMap.setTileByIndex(i, WALL, true);
-
 					var x:Float;
 					var y:Float;
 
+					_visionSprite.pixels.lock();
 					for(i in 0...360)
 					{
 						x = Math.cos(i*0.01745);
@@ -191,15 +185,26 @@ class MainState extends FlxState
 						var visionRadius:Int = 6;
 						for(i in 0...visionRadius)
 						{
-							_visionMap.setTile(Std.int(ox), Std.int(oy), NONE, true);
+							//_visionSprite.setTile(Std.int(ox), Std.int(oy), NONE, true);
+							var r:openfl.geom.Rectangle = new openfl.geom.Rectangle(
+										Std.int(ox)*32,
+									 	Std.int(oy)*32,
+									 	32,
+									 	32);
+							_visionSprite.pixels.fillRect(r, 0);
+
 							if(
 									_map.getTile(Std.int(ox), Std.int(oy)) == WALL || 
 									_map.getTile(Std.int(ox), Std.int(oy)) == CLOSED_DOOR ||
 									_map.getTile(Std.int(ox), Std.int(oy)) == SECRET_DOOR) break;
+
 							ox+=x;
 							oy+=y;
 						}
 					}
+
+					_visionSprite.pixels.unlock();
+					_visionSprite.dirty = true;
 				}
 			}
 		}
