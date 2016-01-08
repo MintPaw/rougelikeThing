@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxPoint;
+import openfl.geom.Rectangle;
 
 class MainState extends FlxState
 {
