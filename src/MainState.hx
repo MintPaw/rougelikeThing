@@ -24,7 +24,7 @@ class MainState extends FlxState
 	private var _map:FlxTilemap;
 
 	private var _visionSprite:FlxSprite;
-	private var _cachedVisionArray:Array<Int>;
+	private var _historySprite:FlxSprite;
 
 	public function new()
 	{
@@ -43,10 +43,12 @@ class MainState extends FlxState
 		}
 
 		var mapData:Array<Int>;
-		var mapWidth:Int = 80;
+		// var mapWidth:Int = 80;
+		// var mapHeight:Int = 80;
+		var mapWidth:Int = 45;
+		var mapHeight:Int = 25;
 		var dungeon:MiscDungeonGenerator;
 		{ // Generate map
-			var mapHeight:Int = 80;
 			var minRoomSize:Int = 3;
 			var maxRoomSize:Int = 11;
 			var attempts:Int = 100;
@@ -91,8 +93,12 @@ class MainState extends FlxState
 				 	Std.int(_map.height),
 				 	0xFF333333);
 
-			_cachedVisionArray = [];
-			for (i in 0..._map.totalTiles) _cachedVisionArray[i] = 0;
+			_historySprite = new FlxSprite();
+			_historySprite.makeGraphic(
+					Std.int(_map.width),
+				 	Std.int(_map.height),
+				 	0);
+			_historySprite.visible = false;
 		}
 
 		{ // Setup camera
@@ -108,6 +114,7 @@ class MainState extends FlxState
 		}
 		
 		add(_map);
+		add(_historySprite);
 		add(_player);
 		add(_visionSprite);
 	}
@@ -123,7 +130,15 @@ class MainState extends FlxState
 			if (FlxG.keys.justPressed.DOWN) action = "down";
 			if (FlxG.keys.justPressed.LEFT) action = "left";
 			if (FlxG.keys.justPressed.RIGHT) action = "right";
-			if (FlxG.keys.justPressed.T) _visionSprite.visible = !_visionSprite.visible;
+			if (FlxG.keys.justPressed.SPACE) FlxG.resetState();
+			if (FlxG.keys.justPressed.T)
+				_visionSprite.visible = !_visionSprite.visible;
+			if (FlxG.keys.justPressed.H)
+				_historySprite.visible = !_historySprite.visible;
+			if (FlxG.keys.justPressed.M)
+				_map.visible = !_map.visible;
+			if (FlxG.keys.justPressed.Z)
+				FlxG.camera.zoom = FlxG.camera.zoom == 1 ? 0.25 : 1;
 		}
 
 		{ // Scroll map
@@ -132,7 +147,6 @@ class MainState extends FlxState
 			if (FlxG.keys.pressed.S) FlxG.camera.scroll.y += scrollSpeed;
 			if (FlxG.keys.pressed.A) FlxG.camera.scroll.x -= scrollSpeed;
 			if (FlxG.keys.pressed.D) FlxG.camera.scroll.x += scrollSpeed;
-			if (FlxG.keys.pressed.SPACE) FlxG.resetState();
 		}
 
 		{ // Do action
@@ -181,24 +195,8 @@ class MainState extends FlxState
 			{
 				{ // Vision
 					_visionSprite.pixels.lock();
+					_historySprite.pixels.lock();
 					
-					/*
-					for (i in 0..._cachedVisionArray.length)
-					{
-						if (_cachedVisionArray[i] == 0)
-						{
-							var r:Rectangle = new Rectangle(
-							_visionSprite.pixels.draw(
-									FlxG.stage,
-									null,
-									null,
-									null,
-									r);
-							_cachedVisionArray[i] = 1;
-						}
-					}
-					*/
-
 					for(i in 0...360)
 					{
 						var x:Float = Math.cos(i*0.01745);
@@ -209,11 +207,24 @@ class MainState extends FlxState
 						var visionRadius:Int = 6;
 						for(i in 0...visionRadius)
 						{
-							var r:Rectangle =
+							var worldRect:Rectangle =
 								new Rectangle(Std.int(ox)*32, Std.int(oy)*32, 32, 32);
 
-							_visionSprite.pixels.fillRect(r, 0);
-							_cachedVisionArray[Std.int(oy*_map.widthInTiles+ox)] = 0;
+							var cameraRect:Rectangle = worldRect.clone();
+							// cameraRect.x -= FlxG.camera.scroll.x;
+							// cameraRect.y -= FlxG.camera.scroll.y;
+
+							_visionSprite.pixels.fillRect(worldRect, 0);
+
+							var m = new openfl.geom.Matrix();
+							m.translate(FlxG.camera.scroll.x, FlxG.camera.scroll.y);
+
+							_historySprite.pixels.draw( 
+									FlxG.stage,
+									m,
+									null,
+									null,
+									cameraRect);
 
 							if(
 									_map.getTile(Std.int(ox), Std.int(oy)) == WALL || 
@@ -226,7 +237,10 @@ class MainState extends FlxState
 					}
 
 					_visionSprite.pixels.unlock();
+					_historySprite.pixels.unlock();
+
 					_visionSprite.dirty = true;
+					_historySprite.dirty = true;
 				}
 			}
 		}
