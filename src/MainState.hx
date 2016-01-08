@@ -94,6 +94,7 @@ class MainState extends FlxState
 					32,
 					FlxTilemap.OFF,
 					1);
+			Reg.adjustColour(_visionMap.cachedGraphics.bitmap, 0, 0, 0, 64);
 			
 			for (i in 0..._map.totalTiles) _visionMap.setTileByIndex(i, WALL, true);
 		}
@@ -190,6 +191,14 @@ class MainState extends FlxState
 			if (step)
 			{
 				{ // Vision
+					for (i in 0..._visionMap.totalTiles)
+					{
+						if (_visionMap.getTileByIndex(i) == NONE)
+						{
+							_visionMap.setTileByIndex(i, _map.getTileByIndex(i));
+						}
+					}
+
 					for(i in 0...360)
 					{
 						var x:Float = Math.cos(i*0.01745);
