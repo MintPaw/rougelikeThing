@@ -10,8 +10,17 @@ class MainState extends FlxState
 {
 	private static var TRACE:Dynamic;
 
+	public static inline var NONE:Int = 0;
+	public static inline var EMPTY:Int = 1;
+	public static inline var UNKNOWN:Int = 2;
+	public static inline var WALL:Int = 3;
+	public static inline var OPEN_DOOR:Int = 4;
+	public static inline var CLOSED_DOOR:Int = 5;
+	public static inline var SECRET_DOOR:Int = 6;
+
 	private var _player:Player;
 	private var _map:FlxTilemap;
+	private var _visionMap:FlxTilemap;
 
 	public function new()
 	{
@@ -68,6 +77,17 @@ class MainState extends FlxState
 					32,
 					FlxTilemap.OFF,
 					1);
+
+			_visionMap = new FlxTilemap();
+			_visionMap.loadMap( 
+					FlxStringUtil.arrayToCSV(mapData, mapWidth),
+					"assets/img/tilemap.png",
+					32,
+					32,
+					FlxTilemap.OFF,
+					1);
+			for (i in 0..._visionMap.totalTiles)
+				_visionMap.setTileByIndex(i, WALL, true);
 		}
 
 		{ // Setup camera
@@ -84,17 +104,21 @@ class MainState extends FlxState
 		
 		add(_map);
 		add(_player);
+		add(_visionMap);
 	}
 
 	override public function update():Void
 	{
 		super.update();
+		var step:Bool = false;
 		var action:String = "";
+
 		{ // Player controls
 			if (FlxG.keys.justPressed.UP) action = "up";
 			if (FlxG.keys.justPressed.DOWN) action = "down";
 			if (FlxG.keys.justPressed.LEFT) action = "left";
 			if (FlxG.keys.justPressed.RIGHT) action = "right";
+			if (FlxG.keys.justPressed.T) _visionMap.visible = !_visionMap.visible;
 		}
 
 		{ // Scroll map
@@ -109,6 +133,7 @@ class MainState extends FlxState
 		{ // Do action
 			if (action != "")
 			{
+				step = true;
 				var playerTile:FlxPoint = FlxPoint.get();
 				playerTile.x = Math.floor(_player.x / 32);
 				playerTile.y = Math.floor(_player.y / 32);
@@ -143,6 +168,39 @@ class MainState extends FlxState
 
 				playerPoint.put();
 				playerTile.put();
+			}
+		}
+
+		{ // Step
+			if (step)
+			{
+				{ // FOV
+					for (i in 0..._visionMap.totalTiles)
+						_visionMap.setTileByIndex(i, WALL, true);
+
+					var x:Float;
+					var y:Float;
+
+					for(i in 0...360)
+					{
+						x = Math.cos(i*0.01745);
+						y = Math.sin(i*0.01745);
+
+						var ox:Float = Std.int(_player.x/32) + 0.5;
+						var oy:Float = Std.int(_player.y/32) + 0.5;
+						var visionRadius:Int = 6;
+						for(i in 0...visionRadius)
+						{
+							_visionMap.setTile(Std.int(ox), Std.int(oy), NONE, true);
+							if(
+									_map.getTile(Std.int(ox), Std.int(oy)) == WALL || 
+									_map.getTile(Std.int(ox), Std.int(oy)) == CLOSED_DOOR ||
+									_map.getTile(Std.int(ox), Std.int(oy)) == SECRET_DOOR) break;
+							ox+=x;
+							oy+=y;
+						}
+					}
+				}
 			}
 		}
 	}
