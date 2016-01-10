@@ -1,27 +1,3 @@
-/* 
- * The MIT License (MIT)
- *
- * Copyright (c) 2014 Steve Wallace
- * Copyright (c) 2014 Julien Samama
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package;
 import utils.Utils;
 
@@ -39,59 +15,18 @@ typedef MiscDungeonOptions = { // make it a class & Options Interface
 	?maxRoomHeight:Int
 }
 
-/**
- * Dungeon builder originally written in Python by Steve Wallace
- * (http://roguebasin.roguelikedevelopment.org/index.php?title=Dungeon_builder_written_in_Python)
- * Ported to Haxe by Julien Samama
- * Ported to HaxeFlixel by Leonardo Cavaletti
- * 
- * Usage:
- * 		var map:MiscDungeonGenerator = new MiscDungeonGenerator();
-		map.generate(80, 40, 110, 50, 60);
-		map.print();
- */
 class MiscDungeonGenerator
 {
-	/**
-	 * This is a list of every room (inc. corridors) and roomList[n] will be a list 
-	 * in the form of [y size of room, x size of room, x coord, y coord] ie a value of [4,5,2,6]
-	 * will be a room 5 across and 4 down with its top left floor tile at coord 2,6. This shouldn't 
-	 * be edited as any changes made after its created will NOT reflect on the map, 
-	 * its purely a reference to the floor area of the map.
-	 */
 	public var roomList:Array<Array<Int>>;
 	
-	/**
-	 * This is similar to roomList, but it purely contains the corridors only and is used for connecting corridors. 
-	 * Its value will be in the format [ref. no to roomList, start x coord, start y coord, direction it travels]. 
-	 * The reference number will give the index to its entry in roomList, x and y start coords will be the 
-	 * coordinate where the corridor actually starts (NOTE this may not be the same as its x and y pos) and 
-	 * direction travelled is a number from 0 to 3 (0-north, 1-east, 2-south,3-west). cList is purely a set of 
-	 * hints supplied to the joinCorridor() function, although it could be used to generate a list of 
-	 * only corridors for use in monster/item/etc placement. Alternatively its ref no could be used to 
-	 * exclude it from roomList to generate a list of rooms only. As with roomList, do not edit after its creation. 
-	 */
 	public var cList:Array<Array<Int>>;
 	
-	/**
-	 * This is the main array that stores the map data, being values from 0 to 5 
-	 * (0-walkable floor, 1-blank/undiscovered, 2-wall, 3-open door, 4-closed door, 5-secret door) 
-	 */
 	public var mapArr(default, null):Array<Dynamic>;
 	
-	/**
-	 * Width of the map area.
-	 */
 	public var mapWidth(default, null):Int;
 	
-	/**
-	 * Height of the map area.
-	 */
 	public var mapHeight(default, null):Int;
 
-	/**
-	 * Default values for tile id's of the map
-	 */
 	public static inline var FLOOR_TILE:Int = 0;
 	public static inline var EMPTY_TILE:Int = 1;
 	public static inline var WALL_TILE:Int = 2;
@@ -106,14 +41,6 @@ class MiscDungeonGenerator
 		cList = new Array<Array<Int>>();
 	}
 	
-	/**
-	 * Generate random layout of rooms, corridors and other features.
-	 * @param   mapWidth    Width of the map area.
-	 * @param   mapHeight   Height of the map area.
-	 * @param	fail        A value from 1 upwards. The higer the value of fail, the greater the chance of larger dungeons being created. A low value (>10) tends to produce only a few rooms, a high value (<50) raises the chance that the whole map area will be used to create rooms (up to the value of maxRooms).
-	 * @param	corrBias    corridor bias. This is a value from 0 to 100 and represents the %chance a feature will be a corridor instead of a room. A value of 0 will produce rooms only, a value of 100 will produce corridors only.
-	 * @param	maxRooms	Maximum number of rooms to create. This, combined with fail, can be used to create a specific number of rooms.
-	 */
 	public function generate(mapWidth:Int=80, mapHeight:Int=80, minSize:Int = 3, maxSize:Int = 11, fail:Int=100, corrBias:Int=5, maxRooms:Int=60):Void
 	{
 		this.mapWidth = mapWidth;
@@ -202,9 +129,6 @@ class MiscDungeonGenerator
 		finalJoins();
 	}
 
-	/**
-	 * Gets the raw generated array 
-	 */
 	public function getRawMap():Dynamic
 	{
 		return mapArr.copy();
@@ -232,22 +156,11 @@ class MiscDungeonGenerator
 		}
 	}
 	
-	/**
-	 * Produce a room of random size.
-	 * @return Return a RoomData object containing the width, the height and the type of the room.
-	 */
 	private function makeRoom(minSz:Int, maxSz:Int):RoomData
 	{
 		return { width : Utils.randrange(minSz, maxSz), height : Utils.randrange(minSz, maxSz), type : 5 };
 	}
 	
-	/**
-	 * Randomly produce corridor length and heading
-	 * @return Return an Anonymous Struct/Object
-	 *          w       Width
-	 *          l       Height
-	 *          t       Heading (0 = North, 1 = East, 2 = South, 3 = West)
-	 */
 	private function makeCorridor():RoomData
 	{
 		var corridorLength = Utils.randrange(0, 18) + 3;
@@ -280,17 +193,6 @@ class MiscDungeonGenerator
 		return { width : corridorWidth, height : corridorHeight, type : heading };
 	}
 	
-	/**
-	 * Place feature if enough space and return `canPlace` which is equal to 0, 1, or 2. 
-	 * 0 = fails, 1 = can be placed, 2 = can be placed and is connecting to an other room.
-	 * @param	ll          Height of the room
-	 * @param	ww          Width of the room
-	 * @param	xposs       X position of the room
-	 * @param	yposs       Y position of the room
-	 * @param	rty	        Type of room; can be a normal room or a corridor. 0 to 3 = corridor, 5 = normal room, 6 = starting room
-	 * @param	ext         Exit Toward (0 = North, 1 = East, 2 = South, 3 = West)
-	 * @return  Return whether a room was placed or not.
-	 */
 	private function placeRoom(ll:Int, ww:Int, xposs:Int, yposs:Int, rty:Int, ext:Int):Int
 	{
 		// Arrange for heading because corridors can have negative width and height
@@ -361,16 +263,6 @@ class MiscDungeonGenerator
 		return canPlace; 
 	}
 	
-	/**
-	 * Make an exit to a room by picking a random wall and a random point along that wall.
-	 * TODO: fix the while(true) -> it crash in this infinite loop... (rarely happens tho)
-	 * @return	Return an Anonymous Struct/Object
-	 *          rx      X position on the room wall
-	 *          ry      Y position on the room wall
-	 *          rx2     X position 1 unit outside of the room wall (used to eventually help placing a room next to this one)
-	 *          ry2     Y position 1 unit outside of the room wall (used to eventually help placing a room next to this one)
-	 *          rw      Heading (0 = North wall, 1 = East wall, 2 = South wall, 3 = West wall)
-	 */
 	private function makeExit(rn:Int):ExitData
 	{
 		var room = roomList[rn];
@@ -439,14 +331,6 @@ class MiscDungeonGenerator
 
 	}
 	
-	/**
-	 * Check corridor endpoint and make an exit if it links to another room.
-	 * @param	cno     Room number = actually it's the corridor's number itself (probably last room created in roomList)
-	 * @param	xp      X position 
-	 * @param	yp      Y position
-	 * @param	ed      Exit direction / heading (0 = North wall, 1 = East wall, 2 = South wall, 3 = West wall)
-	 * @param	psb     Chance of linking rooms
-	 */
 	private function joinCorridor(cno:Int, xp:Int, yp:Int, ed:Int, psb:Int):Void
 	{
 		var cArea = roomList[cno]; // the current room (which actually is a corridor)
